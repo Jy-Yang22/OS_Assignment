@@ -1,0 +1,69 @@
+#!/bin/bash
+again=y
+while [ "$again" = y ]
+do
+	echo "=========================================================="
+	echo "                   Add New Course Form                   "
+	echo "=========================================================="
+	code=i
+	until [ "$code" = "ok" ]
+	do
+		echo -n "Course Code (ABCD1234) 		: "; read courseCode
+		
+		if [ ! -f "course.txt" ]
+		then
+			touch course.txt
+		fi
+		
+		courseCode=$(echo $courseCode | tr '[a-z]' '[A-Z]')
+		
+		if [[ $courseCode =~ ^[A-Z]{4}[0-9]{4}$ ]]
+		then
+			compare=$(grep -o "$courseCode" course.txt)
+			if [ "$courseCode" = "$compare" ]
+			then
+				echo -e "Course already Exist! Please Try Again...\n"
+			else
+				code=ok
+			fi
+		else
+			echo -e "Invalid Course Code! Please Try Again...\n"
+		fi
+	done
+		echo -n "Course Name 			: "; read courseName
+	hour=i
+	until [ "$hour" = "ok" ]
+	do
+		echo -n "Credit Hours (1~12) 		: "; read creditHour
+		
+		if [ "$creditHour" -lt 1 -o "$creditHour" -gt 12 ]
+		then
+			echo -e "Invalid Credit Hour(s)! The Input should between (1~12).\nPlease Try Again...\n"
+		else
+			hour=ok
+		fi
+	done
+		echo -n "Remarks				: "; read remarks
+	saving=i
+	until [ "$saving" = "ok" ]
+	do
+		echo -en "\nSave New Course Details? (Y)es or (N)o	: "; read save
+		case "$save" in
+		[yY]) echo "Saving Course Details..."; echo "$courseCode:$courseName:$creditHour:$remarks" >> course.txt; saving=ok;;
+		[nN]) saving=ok;;
+		*) echo -e "Invalid Input! The Input should be (Y/N).\nPlease Try Again..."; saving=i; sleep 1;;
+		esac
+	done
+	adding=i
+	until [ "$adding" = "ok" ]
+	do
+		echo -en "\nAdd Another Course? (Y)es or (Q)uit	: "; read add
+		case "$add" in
+		[yY]) adding=ok; sleep 1; clear; again=y;;
+		[qQ]) echo -e "Returning to University Management Menu...\n"; adding=ok; again=i; sleep 1; clear; ./uniMenu;;
+		*) echo -e "Invalid Input! The Input should be (Y/N).\nPlease Try Again..."; adding=i; sleep 1;;
+		esac
+	done
+done
+
+

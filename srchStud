@@ -1,0 +1,44 @@
+#!/bin/bash
+srchLoop=y
+while [ "$srchLoop" = y ] 
+do
+	echo "==========================================================="
+	echo "                    Search Student Form                    "
+	echo "==========================================================="
+	studentId=i
+	until [ "$studentId" = "ok" ]
+	do
+		echo -n "Enter Student ID (21ABC01234) 		: "; read studId
+		
+		studId=$(echo $studId | tr '[a-z]' '[A-Z]')
+		
+		if [[ $studId =~ ^[0-9]{2}[A-Z]{3}[0-9]{5}$ ]]
+		then
+			compare=$(grep -o "$studId" student.txt)
+			if [ "$studId" = "$compare" ]
+			then
+				studentId=ok
+			else
+				echo -e "Student ID Not Found! Please Try Again...\n"
+			fi
+		else
+			echo -e "Invalid Student ID! Please Try Again...\n"
+		fi
+	done
+		echo -e "\n"
+		echo -n "Student Name (auto display) 		: "; awk -F ':' '$2=="'"$studId"'" {print $3}' student.txt
+		echo -n "Contact Number (auto display) 		: "; awk -F ':' '$2=="'"$studId"'" {print $6}' student.txt
+		echo -n "Email Address (auto display) 		: "; awk -F ':' '$2=="'"$studId"'" {print $7}' student.txt
+		echo -e "\n==========================================================="
+		
+	again=i
+	until [ "$again" = "ok" ]
+	do
+		echo -en "\nSearch Another Student? (Y)es or (Q)uit	: "; read search
+		case "$search" in
+		[yY]) srchLoop=y; studentId=i; again=ok; sleep 1; clear ;;
+		[qQ]) echo -e "Returning to University Management Menu...\n"; again=ok; srchLoop=n; sleep 1; clear; ./uniMenu;;
+		*) echo -e "Invalid Input! The Input should be (Y/N).\nPlease Try Again..."; again=i; sleep 1;;
+		esac
+	done
+done

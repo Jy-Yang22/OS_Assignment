@@ -1,0 +1,57 @@
+#!/bin/bash
+# $1=coursecode, $2=mark, $3=credithour
+
+if [ $2 -ge 80 -a $2 -le 100 ]
+then
+	grade=A
+	gradePoint=4.000
+	remarks=Excellent
+elif [ $2 -ge 75 -a $2 -le 79 ]
+then
+	grade=A-
+	gradePoint=3.750
+	remarks=Excellent
+elif [ $2 -ge 70 -a $2 -le 74 ]
+then
+	grade=B+
+	gradePoint=3.500
+	remarks=Good
+elif [ $2 -ge 65 -a $2 -le 69 ]
+then
+	grade=B
+	gradePoint=3.000
+	remarks=Good
+elif [ $2 -ge 60 -a $2 -le 64 ]
+then
+	grade=B-
+	gradePoint=2.750
+	remarks=Pass
+elif [ $2 -ge 55 -a $2 -le 59 ]
+then
+	grade=C+
+	gradePoint=2.500
+	remarks=Pass
+elif [ $2 -ge 50 -a $2 -le 54 ]
+then
+	grade=C
+	gradePoint=2.000
+	remarks=Pass
+elif [ $2 -ge 0 -a $2 -le 49 ]
+then
+	grade=F
+	gradePoint=0.000
+	remarks=Failed
+elif [ $2 -gt 100 -o $2 -lt 1 ]
+then
+	echo "Invalid Mark(s) Range!"
+fi
+
+qualityPoint=`echo "var=$gradePoint; var*=$3; var" | bc`
+
+if [ ! -f "tempResult.txt" ]
+then
+	touch tempResult.txt
+fi
+
+echo "$1:$2:$grade:$remarks:$qualityPoint" >> tempResult.txt
+

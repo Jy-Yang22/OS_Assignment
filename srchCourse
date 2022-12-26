@@ -1,0 +1,44 @@
+#!/bin/bash
+srchLoop=y
+while [ "$srchLoop" = y ] 
+do
+	echo "=========================================================="
+	echo "                    Search Course Form                    "
+	echo "=========================================================="
+	code=i
+	until [ "$code" = "ok" ]
+	do
+		echo -n "Enter Course Code (ABCD1234) 		: "; read courseCode
+		
+		courseCode=$(echo $courseCode | tr '[a-z]' '[A-Z]') 
+		
+		if [[ $courseCode =~ ^[A-Z]{4}[0-9]{4}$ ]]
+		then
+			compare=$(grep -o "$courseCode" course.txt)
+			if [ "$courseCode" = "$compare" ]
+			then
+				code=ok
+			else
+				echo -e "Course Not Found! Please Try Again...\n"
+			fi
+		else
+			echo -e "Invalid Course Code! Please Try Again...\n"
+		fi
+	done
+		echo -e "\n"
+		echo -n "Course Name (auto display) 		: "; awk -F ':' '$1=="'"$courseCode"'" {print $2}' course.txt
+		echo -n "Credit Hour(s) (auto display) 		: "; awk -F ':' '$1=="'"$courseCode"'" {print $3}' course.txt
+		echo -n "Remarks (auto display) 			: "; awk -F ':' '$1=="'"$courseCode"'" {print $4}' course.txt
+		echo -e "\n=========================================================="
+		
+	again=i
+	until [ "$again" = "ok" ]
+	do
+		echo -en "\nSearch Another Course? (Y)es or (Q)uit	: "; read search
+		case "$search" in
+		[yY]) srchLoop=y; code=i; again=ok; sleep 1; clear;;
+		[qQ]) echo -e "Returning to University Management Menu...\n"; again=ok; srchLoop=n; sleep 1; clear; ./uniMenu;;
+		*) echo -e "Invalid Input! The Input should be (Y/N).\nPlease Try Again..."; again=i; sleep 1;;
+		esac
+	done
+done

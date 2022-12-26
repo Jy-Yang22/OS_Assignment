@@ -1,0 +1,6 @@
+CourseCode:CourseName:CreditHour(s):Remarks
+BACS1234:Information Technology:4:This course will offer Bachelor Degree Year 1
+BACS2053:Object-Oriented Programming:3:This course will offer Bachelor Degree Year 2
+BACS2093:Operating System:3:This course will offer every semester
+BACS2073:Mobile Application Development:4:This is MAD
+BACS3033:Social and Professional Issues:3:This is SPI

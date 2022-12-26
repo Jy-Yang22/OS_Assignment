@@ -1,0 +1,125 @@
+#!/bin/bash
+again=y
+while [ "$again" = y ]
+do
+		echo "=========================================================="
+		echo "                  Programme Selection Menu                "
+		echo "=========================================================="
+		echo " A -> RIT (Bachelor of Information Technology) "
+		echo " B -> RSD (Bachelor of Software Development) "
+		echo " C -> RST (Bachelor of Interactive Software Technology)"
+		echo " D -> REI (Bachelor of Enterprise Information System) "
+		echo " E -> RSF (Bachelor of Software Engineering) "
+		echo " F -> RDS (Bachelor of Data Science) "
+		echo " G -> RIS (Bachelor of Information Security) "
+		echo 
+		echo " Q -> Quit (Return to University Management Menu) "
+		echo -e "==========================================================\n"
+	progLoop=i
+	until [ "$progLoop" = "ok" ]
+	do
+		echo -n "Please select a choice (A~G): "; read choice
+		
+		case "$choice" in
+		[aA]) programme="RIT"; progLoop=ok;;
+		[bB]) programme="RSD"; progLoop=ok;;
+		[cC]) programme="RST"; progLoop=ok;;
+		[dD]) programme="REI"; progLoop=ok;;
+		[eE]) programme="RSF"; progLoop=ok;;
+		[fF]) programme="RDS"; progLoop=ok;;
+		[gG]) programme="RIS"; progLoop=ok;;
+		[qQ]) echo -e "Returning to University Management Menu...\n"; progLoop=ok; sleep 1; clear; ./uniMenu;;
+		*) echo -e "Invalid Input! The Input should between (A~G).\nPlease Try Again...\n"; progLoop=i; sleep 1;;
+		esac
+	done
+
+	if [ "$progLoop" = "ok" ]
+	then
+		echo -e "\n=========================================================="
+		echo "                   Add New Student Form                   "
+		echo "=========================================================="
+		studentId=i
+		until [ "$studentId" = "ok" ]
+		do
+			echo -n "Student ID (21ABC01234) 		: "; read studId
+			
+			if [ ! -f "student.txt" ]
+			then
+				touch student.txt
+			fi
+			
+			studId=$(echo $studId | tr '[a-z]' '[A-Z]')
+			
+			if [[ $studId =~ ^[0-9]{2}[A-Z]{3}[0-9]{5}$ ]]
+			then
+				compare=$(grep -o "$studId" student.txt)
+				if [ "$studId" = "$compare" ]
+				then
+					echo -e "Student ID already Exist! Please Try Again...\n"
+				else
+					studentId=ok
+				fi
+			else
+				echo -e "Invalid Student ID! Please Try Again...\n"
+			fi
+		done
+			echo -n "Student Name (same as NRIC) 		: "; read studName
+			echo -n "NRIC/Passport Number 			: "; read studIc
+		birthDate=i
+		until [ "$birthDate" = "ok" ]
+		do
+			echo -n "Birth Date (DD-MM-YYYY) 		: "; read studBd
+
+			if [[ $studBd =~ ^[0-9]{2}-[0-9]{2}-[0-9]{4}$ ]]
+			then
+				birthDate=ok
+			else
+				echo -e "Invalid Birth Date! Please Try Again...\n"
+			fi
+		done
+		number=i
+		until [ "$number" = "ok" ]
+		do
+			echo -n "Contact Number (012-3456789)		: "; read studNum
+			
+			if [[ $studNum =~ ^[0-9]{3}-[0-9]{7}$ ]]
+			then
+				number=ok
+			else
+				echo -e "Invalid Contact Number! Please Try Again...\n"
+			fi
+		done
+		email=i
+		until [ "$email" = "ok" ]
+		do
+			echo -n "Email Address (xxx@student.tarc.edu.my) : "; read studEmail
+			
+			if [[ $studEmail =~ ^[a-z]+@student.tarc.edu.my$ ]]
+			then
+				email=ok
+			else
+				echo -e "Invalid Student Email! Please Try Again...\n"
+			fi
+		done
+		saving=i
+		until [ "$saving" = "ok" ]
+		do
+			echo -en "\nSave New Student Details? (Y)es or (N)o	: "; read save
+			case "$save" in
+			[yY]) echo "Saving Student Details..."; echo "$programme:$studId:$studName:$studIc:$studBd:$studNum:$studEmail" >> student.txt; saving=ok;;
+			[nN]) saving=ok;;
+			*) echo -e "Invalid Input! The Input should be (Y/N).\nPlease Try Again..."; saving=i; sleep 1;;
+			esac
+		done
+		adding=i
+		until [ "$adding" = "ok" ]
+		do
+			echo -en "\nAdd Another Student? (Y)es or (Q)uit	: "; read add
+			case "$add" in
+			[yY]) adding=ok; sleep 1; clear; again=y;;
+			[qQ]) echo -e "Returning to University Management Menu...\n"; again=n; adding=ok; sleep 1; clear; ./uniMenu;;
+			*) echo -e "Invalid Input! The Input should be (Y/N).\nPlease Try Again..."; adding=i; sleep 1;;
+			esac
+		done
+	fi
+done

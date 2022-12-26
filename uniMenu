@@ -1,0 +1,28 @@
+#!/bin/bash
+clear
+loop=y
+	echo "================================"
+	echo "   University Management Menu   "
+	echo "================================"
+	echo "   1 -> Add New Student "
+	echo "   2 -> Search Student Details "
+	echo "   3 -> Add New Course "
+	echo "   4 -> Search Course Details "
+	echo "   5 -> Grade Student "
+	echo 
+	echo "   Q -> Quit (Exit Program) "
+	echo -e "================================\n"
+while [ "$loop" = y ]
+do
+	echo -n "Please select a choice (1~5): "; read choice
+	
+	case "$choice" in
+	1) loop=n; sleep 1; clear; ./addNewStud;;
+	2) loop=n; sleep 1; clear; ./srchStud;;
+	3) loop=n; sleep 1; clear; ./addNewCourse;;
+	4) loop=n; sleep 1; clear; ./srchCourse;;
+	5) loop=n; sleep 1; clear; ./gradeStud;;
+	[qQ]) echo -e "Exiting Program...\n"; sleep 1; clear; exit;;
+	*) echo -e "Invalid Input! The Input should between (1~5).\nPlease Try Again...\n"; loop=y; sleep 1;;
+	esac
+done

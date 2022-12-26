@@ -1,0 +1,183 @@
+#!/bin/bash
+again=y
+while [ "$again" = y ]
+do
+		echo "==========================================================="
+		echo "                  Student Validation Form                  "
+		echo "==========================================================="
+	studentId=i
+	until [ "$studentId" = "ok" ]
+	do
+		echo -n "Enter Student's ID Number 		: "; read studId
+		
+		studId=$(echo $studId | tr '[a-z]' '[A-Z]')
+	
+		if [[ $studId =~ ^[0-9]{2}[A-Z]{3}[0-9]{5}$ ]]
+		then
+			compare=$(grep -o "$studId" student.txt)
+			if [ "$studId" = "$compare" ]
+			then
+				studentId=ok
+			else
+				echo -e "Student ID Not Found! Please Try Again...\n"
+			fi
+		else
+			echo -e "Invalid Student ID! Please Try Again...\n"
+		fi
+	done
+		studName=`awk -F ':' '$2=="'"$studId"'" {print $3}' student.txt`
+		echo
+		echo -en "Student Name (auto display) 		: $studName \n";
+		echo -n "Programme (auto display) 		: "; awk -F ':' '$2=="'"$studId"'" {print $1}' student.txt
+	year=i
+	until [ "$year" = "ok" ]
+	do
+		echo -n "Academic Year (YYYY) 			: "; read acaYear
+	
+		if [[ $acaYear =~ ^[0-9]{4}$ ]]
+		then
+			year=ok
+		else
+			echo -e "Invalid Academic Year! Please Try Again...\n"
+		fi
+	done
+	sem=i
+	until [ "$sem" = "ok" ]
+	do
+		echo -n "Semester (1/2/3) 			: "; read semester
+	
+		if [ "$semester" -lt 1 -o "$semester" -gt 3 ]
+		then
+			echo -e "Invalid Semester! The Input should be (1/2/3).\nPlease Try Again...\n"
+		else
+			sem=ok
+		fi
+	done
+
+		echo -e "===========================================================\n"
+	con=i
+	until [ "$con" = "ok" ]
+	do
+		echo -en "Press (c) to continue enter student's mark(s) or (q) to quit from the prompt	: "; read corq
+		case "$corq" in
+		[cC]) con=ok; sleep 1;;
+		[qQ]) echo -e "Returning to University Management Menu...\n"; con=ok; sleep 1; clear; ./uniMenu;;
+		*) echo -e "Invalid Input! The Input should be (Y/N).\nPlease Try Again..."; con=i; sleep 1;;
+		esac
+	done
+		echo
+		echo "==========================================================="
+		echo "             Student Examination Mark(s) Form              "
+		echo "==========================================================="
+	count=0
+	again=i
+	dupes=n
+	until [ "$again" = "ok" ]
+	do
+		#echo "$count"
+		code=i
+		until [ "$code" = "ok" ]
+		do
+			echo -n "Enter Course Code 			: "; read courseCode
+			
+			courseCode=$(echo $courseCode | tr '[a-z]' '[A-Z]') 
+			
+			if [[ $courseCode =~ ^[A-Z]{4}[0-9]{4}$ ]]
+			then
+				if [ "$count" -ge 1 ]
+				then
+					compareTmp=$(grep -o "$courseCode" tempResult.txt)
+					if [ "$courseCode" = "$compareTmp" ]
+					then
+						echo -e "The Course has been added! Please Try Another Course...\n"
+						dupes=y
+					else
+						dupes=n
+					fi
+				fi
+				if [ "$dupes" = n ]
+				then
+					compare=$(grep -o "$courseCode" course.txt)
+					if [ "$courseCode" = "$compare" ]
+					then
+						code=ok
+					else
+						echo -e "Course Not Found! Please Try Again...\n"
+					fi
+				fi
+			else
+				echo -e "Invalid Course Code! Please Try Again...\n"
+			fi
+		done
+			echo -n "Course Name (auto display) 		: "; awk -F ':' '$1=="'"$courseCode"'" {print $2}' course.txt
+			echo
+		mark=i
+		until [ "$mark" = "ok" ]
+		do
+			echo -n "Enter the mark(s) obtained		: "; read score
+		
+			if [ "$score" -lt 0 -o "$score" -gt 100 ]
+			then
+				echo -e "Invalid Mark(s) Range! The Mark(s) should between (0~100) Please Try Again...\n"
+				
+			else
+				mark=ok
+			fi
+		done
+			creditHours=`awk -F ':' '$1=="'"$courseCode"'" {print $3}' course.txt`
+			./marks $courseCode $score $creditHours
+			echo -e "===========================================================\n"
+		continue=i
+		until [ "$continue" = "ok" ]
+		do
+			echo -en "Press (c) to continue enter student's mark(s) or (g) to generate exam result	: "; read corg
+			case "$corg" in
+			[cC]) count=$((count+1)); echo;  continue=ok; again=i; sleep 1;;
+			[gG]) echo -e "Generating Exam Result...\n"; continue=ok; again=ok; sleep 1;;
+			*) echo -e "Invalid Input! The Input should be (Y/N).\nPlease Try Again..."; continue=i; sleep 1;;
+			esac
+		done
+	done
+		if [[ $corg =~ ^[gG]$ ]]
+		then
+			filename="$studId"Result
+			if [ -f "$filename".txt ]
+			then
+				rm "$filename".txt
+				touch "$filename".txt
+			fi
+				
+			clear
+			echo "=============================================================" >> "$filename".txt
+			echo "             Student Examination Result(s) Form              " >> "$filename".txt
+			echo "=============================================================" >> "$filename".txt
+			echo " Student ID				: $studId " >> "$filename".txt
+			echo " Student Name				: $studName " >> "$filename".txt
+			echo " Academic Year				: $acaYear " >> "$filename".txt
+			echo " Semester				: $semester " >> "$filename".txt
+			echo "=============================================================" >> "$filename".txt
+			
+			echo -e "\n===============================================================================================" >> "$filename".txt
+			echo -e " Course Code:\tMark(s) Obtained:\tGrade Obtained:\t\tRemark(s):\tQuality Point: " >> "$filename".txt
+			echo "===============================================================================================" >> "$filename".txt
+			result=`awk -F ':' '{printf " %-14s %-23d %-23s %-15s %g\n", $1, $2, $3, $4, $5}' tempResult.txt`
+			echo "$result" >> "$filename".txt
+			sum=`awk -F ':' '{sum+=$5} END{print sum}' tempResult.txt`
+			echo -e "\n\t\t\t\t\t\t   \033[1mTotal Quality Point(s): \t$sum\033[0m" >> "$filename".txt
+			rm tempResult.txt
+			echo "===============================================================================================" >> "$filename".txt
+		fi
+		
+		cat "$filename".txt
+		
+		return=i
+		until [ "$return" = "ok" ]
+		do
+			echo -en "\nPress (q) to return to University Management Menu	: "; read back
+			case "$back" in
+			[qQ]) echo -e "Returning to University Management Menu...\n"; return=ok; sleep 1; ./uniMenu;;
+			*) echo -e "Invalid Input! The Input should be (Y/N).\nPlease Try Again..."; return=i; sleep 1;;
+			esac
+		done
+done
+

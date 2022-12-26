@@ -1,0 +1,5 @@
+Programme:StudentId:StudentName:NRIC/PassportNumber:BirthDate:ContactNumber:EmailAddress
+RST:21WMR05341:Wong Zi Xiu:011122-14-0591:22-11-2001:017-6954618:zxwong@student.tarc.edu.my
+RST:21WMR05340:Wong Sai Siang:012345-67-8901:12-34-2069:017-6969696:sswong@student.tarc.edu.my
+RST:21WMR05339:Wong Rong Kai:098765-12-3456:12-01-2001:012-3456789:rkwong@student.tarc.edu.my
+RST:21WMR05336:Teh Jin Yang:012345-67-8901:12-12-2001:012-3456789:tjy@student.tarc.edu.my
